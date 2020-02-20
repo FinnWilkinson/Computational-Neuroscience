@@ -99,12 +99,13 @@ def McCulloch_Pitts_Formula(weight_matrix, test) :
 
         if (next == test) :
             seven_segment(test)
+            submission.seven_segment(test)
             return next
 
         else :
             test = next
-
         seven_segment(test)
+        submission.seven_segment(test)
 
 
 print("test1")
@@ -113,8 +114,9 @@ submission.section("Test 1")
 test=[1,-1,1,1,-1,1,1,-1,-1,-1,-1]
 
 seven_segment(test)
-test = McCulloch_Pitts_Formula(weight_matrix, test)
 submission.seven_segment(test)
+test = McCulloch_Pitts_Formula(weight_matrix, test)
+
 ##for COMSM0027
 
 ##where energy is the energy of test
@@ -132,10 +134,8 @@ test=[1,1,1,1,1,1,1,-1,-1,-1,-1]
 submission.section("Test 1")
 
 seven_segment(test)
+submission.seven_segment(test)
 test = McCulloch_Pitts_Formula(weight_matrix, test)
-
-
-#submission.seven_segment(test)
 
 ##for COMSM0027
 ##where energy is the energy of test
