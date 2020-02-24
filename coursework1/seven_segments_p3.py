@@ -85,13 +85,13 @@ submission.section("Weight matrix")
 submission.matrix_print("W",weight_matrix)
 
 def McCulloch_Pitts_Formula(weight_matrix, test) :
-    next = [0.0,0.0,0.0,0.0,0.0,0.0,0.0, test[7], test[8], test[9], test[10]]
     while (1) :
+        next = [0.0,0.0,0.0,0.0,0.0,0.0,0.0, test[7], test[8], test[9], test[10]]
         for i in range(0,7) :
             for j in range(0,7) :
                 next[i] = next[i] + (weight_matrix[i,j] * test[j] )
 
-            if (next[i] > 0.0) :
+            if (next[i] > 0) :
                 next[i] = 1
 
             else :
