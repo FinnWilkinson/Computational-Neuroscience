@@ -65,16 +65,20 @@ seven_segment(three)
 seven_segment(six)
 seven_segment(one)
 
-weight_matrix = np.asarray([[0.0,0.0,0.0,0.0,0.0,0.0,0.0],
-                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0],
-                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0],
-                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0],
-                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0],
-                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0],
-                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0]])
+weight_matrix = np.asarray([[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+                            [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]])
 
-for i in range(0,7) :
-    for j in range(0,7) :
+for i in range(0,11) :
+    for j in range(0,11) :
         if (i != j) :
             weight_matrix[i,j] = (1/3) * ((six[i]*six[j]) + (three[i]*three[j]) + one[i]*one[j])
 
@@ -86,9 +90,10 @@ submission.matrix_print("W",weight_matrix)
 
 def McCulloch_Pitts_Formula(weight_matrix, test) :
     while (1) :
-        next = [0.0,0.0,0.0,0.0,0.0,0.0,0.0, test[7], test[8], test[9], test[10]]
-        for i in range(0,7) :
-            for j in range(0,7) :
+        next = test[:]
+        for i in range(0,11) :
+            next[i] = 0.0
+            for j in range(0,11) :
                 next[i] = next[i] + (weight_matrix[i,j] * test[j] )
 
             if (next[i] > 0) :
@@ -98,12 +103,10 @@ def McCulloch_Pitts_Formula(weight_matrix, test) :
                 next[i] = -1
 
         if (next == test) :
-            seven_segment(test)
-            submission.seven_segment(test)
             return next
 
         else :
-            test = next
+            test = next[:]
         seven_segment(test)
         submission.seven_segment(test)
 
