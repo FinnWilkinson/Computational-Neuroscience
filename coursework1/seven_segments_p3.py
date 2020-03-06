@@ -119,7 +119,8 @@ test=[1,-1,1,1,-1,1,1,-1,-1,-1,-1]
 seven_segment(test)
 submission.seven_segment(test)
 test = McCulloch_Pitts_Formula(weight_matrix, test)
-
+seven_segment(test)
+submission.seven_segment(test)
 ##for COMSM0027
 
 ##where energy is the energy of test
@@ -139,7 +140,8 @@ submission.section("Test 1")
 seven_segment(test)
 submission.seven_segment(test)
 test = McCulloch_Pitts_Formula(weight_matrix, test)
-
+seven_segment(test)
+submission.seven_segment(test)
 ##for COMSM0027
 ##where energy is the energy of test
 #submission.print_number(energy)
