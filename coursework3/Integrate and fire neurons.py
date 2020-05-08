@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import math
 
 def intAndFire(leakPot, Vrest, Vthresh, Rm, Taum, Ie, duration, timestep):
     V0=Vrest
@@ -78,6 +79,74 @@ def synapse2Neruons(Taum, E_L, Vrest, Vth, RmIe, RmGs, deltaS, Taus, Es, duratio
 
     return
 
+def STDP(E_L, Vrest, Vth, Rm, Taum, Ie, N_synapses, Taus, g_bar, Es, deltaS, timestep, firingRate, duration, STDP_flag):
+    s_array = [0] * N_synapses
+    g_array = [g_bar] * N_synapses
+    data = []
+    data.append(Vrest)   
+    x = []
+
+    t_pre = [0] * N_synapses
+    t_post = -1000
+    t_post_bool = False
+
+    for t in range(1,1+int(duration/timestep)):
+
+        sumG_bar_s = 0
+        for i in range(0, N_synapses):
+            sumG_bar_s += g_array[i]*s_array[i]
+
+        RmIs = sumG_bar_s * Rm * (Es - data[t-1])
+        v = data[t-1] + ((E_L- data[t-1] + (Rm*Ie) + RmIs)/Taum)*timestep
+
+        for i in range (0, N_synapses):
+            if random.random() < (firingRate * timestep):
+                s_array[i] = 0.5 + s_array[i] - (timestep*s_array[i])/Taus
+                t_pre[i] = t*timestep
+            else:
+                s_array[i] = s_array[i] - (timestep*s_array[i])/Taus
+
+        if v>Vth:
+            t_post = (t)*timestep
+            t_post_bool = True
+            v=Vrest
+        data.append(v)
+        x.append(t*timestep)
+
+        if(STDP_flag == 'on'):
+            for i in range (0, N_synapses):
+                if t_post_bool == True :
+                    g_array[i] = f_delta_t(g_array[i], (t_post - t_pre[i]), 0.2*nSeim, 0.25*nSeim, 20*ms, 20*ms)
+                elif t_pre[i] == t*timestep :
+                    g_array[i] = f_delta_t(g_array[i], (t_post - t_pre[i]), 0.2*nSeim, 0.25*nSeim, 20*ms, 20*ms)
+        
+        t_post_bool = False
+
+    #data[:] = [x / mV for x in data]
+    #plt.plot(x,data[1:])
+    #plt.ylabel('V / mV')
+    #plt.xlabel('time / seconds')
+    plt.hist(g_array)
+    plt.xlabel('Synaptic Strengths / nano-Seimens')
+    plt.ylabel('Quantity')
+    plt.show()
+    
+    return
+
+def f_delta_t(g_bar,delta_t, A_plus, A_minus, Tau_plus, Tau_minus):
+    new_g_bar = 0
+    if delta_t > 0:
+        new_g_bar = g_bar + A_plus*math.exp(-delta_t/Tau_plus)
+    else:
+        new_g_bar = g_bar -A_minus*math.exp(delta_t/Tau_minus)
+
+    if(new_g_bar > 4*nSeim):
+        new_g_bar = 4*nSeim
+    if(new_g_bar < 0):
+        new_g_bar = 0
+
+    return new_g_bar
+
 sec=1.0
 ms=0.001
 Volt=1.0
@@ -86,6 +155,12 @@ Ohm=1.0
 MOhm=1000000
 Amp=1.0
 nA=0.000000001
+nSeim=0.000000001
+hz=1.0
 
+#PART A
 #intAndFire(-70*mV, -70*mV, -40*mV, 10*MOhm, 10*ms, 3.1*nA, 1*sec, 0.25*ms)
-synapse2Neruons(20*ms, -70*mV, -80*mV, -54*mV, 18*mV, 0.15, 0.5, 10*ms, -80*mV, 1*sec, 0.25*ms)
+#synapse2Neruons(20*ms, -70*mV, -80*mV, -54*mV, 18*mV, 0.15, 0.5, 10*ms, -80*mV, 1*sec, 0.25*ms)
+
+#PART B
+STDP(-65*mV, -65*mV, -50*mV, 100*MOhm, 10*ms, 0, 40, 2*ms, 4*nSeim, 0, 0.5, 0.25*ms, 15*hz, 300*sec, 'on')
