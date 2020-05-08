@@ -86,6 +86,9 @@ def STDP(E_L, Vrest, Vth, Rm, Taum, Ie, N_synapses, Taus, g_bar, Es, deltaS, tim
     data.append(Vrest)   
     x = []
 
+    spike_data = [0]
+    count = 0
+
     t_pre = [0] * N_synapses
     t_post = -1000
     t_post_bool = False
@@ -110,6 +113,7 @@ def STDP(E_L, Vrest, Vth, Rm, Taum, Ie, N_synapses, Taus, g_bar, Es, deltaS, tim
             t_post = (t)*timestep
             t_post_bool = True
             v=Vrest
+            count += 1
         data.append(v)
         x.append(t*timestep)
 
@@ -122,14 +126,32 @@ def STDP(E_L, Vrest, Vth, Rm, Taum, Ie, N_synapses, Taus, g_bar, Es, deltaS, tim
         
         t_post_bool = False
 
+        if(t % (1+(int(10/timestep)))) == 0:
+            spike_data.append(count)
+            count = 0
+    
     #data[:] = [x / mV for x in data]
     #plt.plot(x,data[1:])
     #plt.ylabel('V / mV')
     #plt.xlabel('time / seconds')
-    plt.hist(g_array)
-    plt.xlabel('Synaptic Strengths / nano-Seimens')
-    plt.ylabel('Quantity')
-    plt.show()
+
+    #plt.hist(g_array)
+    #plt.xlabel('Synaptic Strengths / nano-Seimens')
+    #plt.ylabel('Quantity')
+
+    #spike_data.append(count)
+    #spike_data[:] = [x/10 for x in spike_data]
+    #time = ['0','10','20','30','40','50','60','70','80','90','100','110','120','130','140','150','160','170','180','190','200','210','220','230','240','250','260','270','280','290','300']
+    #plt.plot(time, spike_data)
+    #plt.ylabel('Firing Rate / Hz')
+    #plt.xlabel('time / seconds')
+
+    spike_data.append(count)
+    spike_data[:] = [x/10 for x in spike_data]
+    average = (spike_data[len(spike_data)-1] + spike_data[len(spike_data)-2] + spike_data[len(spike_data)-3])/3
+    print(average)
+
+    #plt.show()
     
     return
 
@@ -163,4 +185,6 @@ hz=1.0
 #synapse2Neruons(20*ms, -70*mV, -80*mV, -54*mV, 18*mV, 0.15, 0.5, 10*ms, -80*mV, 1*sec, 0.25*ms)
 
 #PART B
-STDP(-65*mV, -65*mV, -50*mV, 100*MOhm, 10*ms, 0, 40, 2*ms, 4*nSeim, 0, 0.5, 0.25*ms, 15*hz, 300*sec, 'on')
+#Q1 + Q2
+#STDP(-65*mV, -65*mV, -50*mV, 100*MOhm, 10*ms, 0, 40, 2*ms, 4*nSeim, 0, 0.5, 0.25*ms, 15*hz, 300*sec, 'on')
+STDP(-65*mV, -65*mV, -50*mV, 100*MOhm, 10*ms, 0, 40, 2*ms, 2.02904*nSeim, 0, 0.5, 0.25*ms, 15*hz, 300*sec, 'off')
