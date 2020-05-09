@@ -79,7 +79,7 @@ def synapse2Neruons(Taum, E_L, Vrest, Vth, RmIe, RmGs, deltaS, Taus, Es, duratio
 
     return
 
-def STDP(E_L, Vrest, Vth, Rm, Taum, Ie, N_synapses, Taus, g_bar, Es, deltaS, timestep, firingRate, duration, STDP_flag):
+def STDP(E_L, Vrest, Vth, Rm, Taum, Ie, N_synapses, Taus, g_bar, Es, deltaS, timestep, firingRate, duration, STDP_flag, B):
     s_array = [0] * N_synapses
     g_array = [g_bar] * N_synapses
     data = []
@@ -93,8 +93,13 @@ def STDP(E_L, Vrest, Vth, Rm, Taum, Ie, N_synapses, Taus, g_bar, Es, deltaS, tim
     t_post = -1000
     t_post_bool = False
 
-    for t in range(1,1+int(duration/timestep)):
+    #use firing rate as <r>
+    f = 10*hz
+    r_0 = firingRate
+    
 
+    for t in range(1,1+int(duration/timestep)):
+        firingRate = r_0 + B*math.sin(2*math.pi*f*t)
         sumG_bar_s = 0
         for i in range(0, N_synapses):
             sumG_bar_s += g_array[i]*s_array[i]
@@ -126,19 +131,23 @@ def STDP(E_L, Vrest, Vth, Rm, Taum, Ie, N_synapses, Taus, g_bar, Es, deltaS, tim
         
         t_post_bool = False
 
-        if(t % (1+(int(10/timestep)))) == 0:
-            spike_data.append(count)
-            count = 0
+        #spikes into 10 second time bins
+        #if(t % (1+(int(10/timestep)))) == 0:
+        #    spike_data.append(count)
+        #    count = 0
     
+    #Q1
     #data[:] = [x / mV for x in data]
     #plt.plot(x,data[1:])
     #plt.ylabel('V / mV')
     #plt.xlabel('time / seconds')
 
+    #Q2
     #plt.hist(g_array)
     #plt.xlabel('Synaptic Strengths / nano-Seimens')
     #plt.ylabel('Quantity')
 
+    #Q2
     #spike_data.append(count)
     #spike_data[:] = [x/10 for x in spike_data]
     #time = ['0','10','20','30','40','50','60','70','80','90','100','110','120','130','140','150','160','170','180','190','200','210','220','230','240','250','260','270','280','290','300']
@@ -146,14 +155,19 @@ def STDP(E_L, Vrest, Vth, Rm, Taum, Ie, N_synapses, Taus, g_bar, Es, deltaS, tim
     #plt.ylabel('Firing Rate / Hz')
     #plt.xlabel('time / seconds')
 
-    spike_data.append(count)
-    spike_data[:] = [x/10 for x in spike_data]
-    average = (spike_data[len(spike_data)-1] + spike_data[len(spike_data)-2] + spike_data[len(spike_data)-3])/3
-    print(average)
+    #Q2 - average over last 30s
+    #spike_data.append(count)
+    #spike_data[:] = [x/10 for x in spike_data]
+    #average = (spike_data[len(spike_data)-1] + spike_data[len(spike_data)-2] + spike_data[len(spike_data)-3])/3
+    #print(average)
 
+    #plt.hist(g_array)
+    #plt.xlabel('Synaptic Strengths / nano-Seimens')
+    #plt.ylabel('Quantity')
     #plt.show()
     
-    return
+    #return (count/duration)
+    return g_array
 
 def f_delta_t(g_bar,delta_t, A_plus, A_minus, Tau_plus, Tau_minus):
     new_g_bar = 0
@@ -187,4 +201,39 @@ hz=1.0
 #PART B
 #Q1 + Q2
 #STDP(-65*mV, -65*mV, -50*mV, 100*MOhm, 10*ms, 0, 40, 2*ms, 4*nSeim, 0, 0.5, 0.25*ms, 15*hz, 300*sec, 'on')
-STDP(-65*mV, -65*mV, -50*mV, 100*MOhm, 10*ms, 0, 40, 2*ms, 2.02904*nSeim, 0, 0.5, 0.25*ms, 15*hz, 300*sec, 'off')
+#STDP(-65*mV, -65*mV, -50*mV, 100*MOhm, 10*ms, 0, 40, 2*ms, 2.02904*nSeim, 0, 0.5, 0.25*ms, 15*hz, 300*sec, 'off')
+
+#Q3
+#output_firing_rate = []
+#input_rates = ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20']
+#for i in range(0,11):
+#    output_firing_rate.append(STDP(-65*mV, -65*mV, -50*mV, 100*MOhm, 10*ms, 0, 40, 2*ms, 4*nSeim, 0, 0.5, 0.25*ms, (10+i)*hz, 300*sec, 'on'))
+
+#plt.plot(input_rates, output_firing_rate)
+#plt.ylabel('Output Firing Rate / Hz')
+#plt.xlabel('Input Firing Rate / Hz')
+#plt.show()
+
+#STDP(-65*mV, -65*mV, -50*mV, 100*MOhm, 10*ms, 0, 40, 2*ms, 4*nSeim, 0, 0.5, 0.25*ms, 20*hz, 300*sec, 'on')
+
+#Q4
+g_bar_mean = []
+g_bar_standardDeviation = []
+Bs = ['0', '5', '10', '15', '20']
+for i in range (0,5):
+    temp = STDP(-65*mV, -65*mV, -50*mV, 100*MOhm, 10*ms, 0, 40, 2*ms, 4*nSeim, 0, 0.5, 0.25*ms, 20*hz, 300*sec, 'on', (0+(5*i))*hz)
+    g_bar_mean.append(np.mean(temp))
+    g_bar_standardDeviation.append(np.std(temp))
+
+g_bar_mean[:] = [x/nSeim for x in g_bar_mean]
+g_bar_standardDeviation[:] = [x/nSeim for x in g_bar_standardDeviation]
+
+plt.plot(Bs, g_bar_mean)
+plt.ylabel('Steady State Synaptic Strength Mean / nano-Siemens')
+plt.xlabel('B-Value / Hz')
+plt.show()
+
+plt.plot(Bs, g_bar_standardDeviation)
+plt.ylabel('Steady State Synaptic Strength Standard Deviation/ nano-Siemens')
+plt.xlabel('B-Value / Hz')
+plt.show()
