@@ -99,7 +99,7 @@ def STDP(E_L, Vrest, Vth, Rm, Taum, Ie, N_synapses, Taus, g_bar, Es, deltaS, tim
     
 
     for t in range(1,1+int(duration/timestep)):
-        r = r_0 + B*math.sin(2*math.pi*f*(t-1))
+        r = r_0 + B*math.sin((t*timestep)*f*2*math.pi)
         sumG_bar_s = 0
         for i in range(0, N_synapses):
             sumG_bar_s += g_array[i]*s_array[i]
@@ -235,9 +235,7 @@ hz=1.0
 #    for i in range (0,5):
 #        temp = STDP(-65*mV, -65*mV, -50*mV, 100*MOhm, 10*ms, 0, 40, 2*ms, 4*nSeim, 0, 0.5, 0.25*ms, 20*hz, 300*sec, 'on', (0+(5*i))*hz)
 #        temp[:] = [x/nSeim for x in temp]
-#        for j in range(0,40):
-#            mean += temp[j]
-#        mean = mean/40
+#        mean = np.mean(temp)
 #        standardDev = np.std(temp)
 #        g_bar_mean[i] += mean
 #        g_bar_standardDeviation[i] += standardDev
@@ -258,5 +256,6 @@ hz=1.0
 temp = STDP(-65*mV, -65*mV, -50*mV, 100*MOhm, 10*ms, 0, 40, 2*ms, 4*nSeim, 0, 0.5, 0.25*ms, 20*hz, 300*sec, 'on', 20*hz)
 temp[:] = [x/nSeim for x in temp]
 plt.hist(temp)
-plt.ylabel('Steady State Synaptic Strength / nano-Siemens')
+plt.ylabel('Quantity')
+plt.xlabel('Steady State Synaptic Strength / nano-Siemens')
 plt.show()
