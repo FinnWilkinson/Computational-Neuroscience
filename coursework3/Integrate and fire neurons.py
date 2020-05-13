@@ -181,7 +181,7 @@ def f_delta_t(g_bar,delta_t, A_plus, A_minus, Tau_plus, Tau_minus):
     if delta_t > 0:
         new_g_bar = g_bar + A_plus*math.exp(-delta_t/Tau_plus)
     else:
-        new_g_bar = g_bar -A_minus*math.exp(delta_t/Tau_minus)
+        new_g_bar = g_bar - A_minus*math.exp(delta_t/Tau_minus)
 
     if(new_g_bar > 4*nSeim):
         new_g_bar = 4*nSeim
